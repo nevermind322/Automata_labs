@@ -93,13 +93,12 @@ val undAutomata = automata {
 }
 
 fun main() {
-
     val A7 = createA7()
 
-    repeat(4) {
-        A7.getPk(it+1).forEach{ list ->
-            println(list)
-        }
+    val res = A7.getFinalPairTable()
+
+    for (clazz  in res) {
+        println(clazz)
         println()
     }
 }
