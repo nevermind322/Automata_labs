@@ -259,6 +259,61 @@ class Automata private constructor(
 
         return res.map { it.toList() }
     }
+
+    fun getMatrixPartition(): List<List<Int>> {
+
+        val encodeOutput =
+            { state: State -> inputAlphabet.fold("") { acc, input -> acc + outputFunction(state, input) } }
+
+
+        val matrix = try {
+            val matr: Matrix by representationsDelegate
+            matr
+        } catch (e: Exception) {
+            createMatrix(table, states.toList(), inputAlphabet, outputAlphabet)
+        }
+
+        var codeToClasses = HashMap<String, MutableList<State>>()
+        for (state in matrix.states) {
+            val encoded = encodeOutput(state)
+            if (encoded !in codeToClasses)
+                codeToClasses[encoded] = mutableListOf()
+            codeToClasses[encoded]!!.add(state)
+        }
+        var same = false
+        var classes = codeToClasses.values
+        while (true) {
+            val newClasses = mutableListOf<MutableList<State>>()
+            for (rows in classes)
+                for (columns in classes) {
+                    val curClasses = HashMap<String, MutableList<State>>()
+                    for (row in rows) {
+                        val currentEntries = mutableListOf<Matrix.Entry>()
+                        for (col in columns)
+                            currentEntries.addAll(matrix[row, col])
+                        currentEntries.sortBy { it.input.symbol }
+                        val encoded = currentEntries.fold("") { acc, el ->
+                            acc + el.input.symbol + el.output.symbol
+                        }
+                        if (encoded !in curClasses)
+                            curClasses[encoded] = mutableListOf()
+                        curClasses[encoded]!!.add(row)
+                    }
+
+
+                    val addedClasses = curClasses.values.toMutableList()
+                    val flat = addedClasses.flatten()
+                    newClasses.removeIf { it.any { elem -> elem in flat } }
+                    newClasses.addAll(addedClasses)
+
+
+                }
+            if (newClasses.size == classes.size) break
+            else classes = newClasses
+        }
+
+        return classes.map { it.map { it.label } }
+    }
 }
 
 

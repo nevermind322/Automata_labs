@@ -95,8 +95,7 @@ val undAutomata = automata {
 fun main() {
     val A7 = createA7()
 
-    val res = A7.getFinalPairTable()
-
+    val res = A7.getMatrixPartition()
     for (clazz  in res) {
         println(clazz)
         println()

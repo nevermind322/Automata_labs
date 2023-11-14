@@ -113,10 +113,11 @@ class Graph(
 class RepresentationsDelegate(val list: MutableList<Representation> = mutableListOf()) {
 
     inline operator fun <reified T : Representation> getValue(thisRef: Nothing?, property: KProperty<*>): T {
-        print(list)
+        println(list)
         for (el in list) {
             if (el is T) return el
         }
+        println("throwing because ${T::class} not in list")
         throw IllegalStateException("There is no representation with type: ${T::class}")
     }
 
@@ -124,6 +125,7 @@ class RepresentationsDelegate(val list: MutableList<Representation> = mutableLis
         for (el in list) {
             if (el is T) return el
         }
+        println("throwing because ${T::class} not in list")
         throw IllegalStateException("There is no representation with type: ${T::class}")
     }
 
